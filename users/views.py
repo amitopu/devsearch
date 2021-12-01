@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 from django.contrib import messages
 from .models import Profile, Skill
 
@@ -18,7 +18,7 @@ def loginUser(request):
         password = request.POST['password']
         
         try:
-            username = User.objects.get(username=username)
+            user = User.objects.get(username=username)
         except:
             messages.error(request, 'Username does not exist')
 
@@ -35,15 +35,15 @@ def loginUser(request):
 
 def logoutUser(request):
     logout(request)
-    messages.error(request,'User is logged out')
+    messages.info(request,'User is logged out')
     return redirect('login')
     
 
 def registerUser(request):
     page = 'register'
-    form = UserCreationForm()
+    form = CustomUserCreationForm()
     if request.method == 'POST':
-        form  = UserCreationForm(request.POST)
+        form  = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
